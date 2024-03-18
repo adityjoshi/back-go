@@ -1,4 +1,4 @@
-module main.go
+module BACKEND-GO
 
 go 1.21.5
 
