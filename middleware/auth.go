@@ -1,12 +1,11 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
-	"os"
+
+	"BACKEND-GO/utils" // Update with correct path
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 )
 
 func AuthorizeWarden() gin.HandlerFunc {
@@ -18,22 +17,15 @@ func AuthorizeWarden() gin.HandlerFunc {
 			return
 		}
 
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// Make sure that the token method conforms to "SigningMethodHMAC"
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
-			return []byte(os.Getenv("JWTSECRET")), nil
-		})
-
-		if err != nil || !token.Valid {
+		claims, err := utils.DecodeJWT(tokenString)
+		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			c.Abort()
 			return
 		}
 
-		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok || claims["user"].(map[string]interface{})["type"].(string) != "warden" {
+		userType, ok := claims["user"].(map[string]interface{})["type"].(string)
+		if !ok || userType != "warden" {
 			c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized for warden"})
 			c.Abort()
 			return
