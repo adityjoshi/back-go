@@ -1,13 +1,15 @@
 package routes
 
 import (
+	"BACKEND-GO/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
 func UserRoute(incomingRoutes *gin.Engine) {
 	incomingRoutes.POST("/register")
 	incomingRoutes.POST("/login")
-	incomingRoutes.GET("/warden", func(c *gin.Context) {
+	incomingRoutes.GET("/warden", middleware.AuthorizeWarden(), func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "This function is accessible by wardens only",
 		})
