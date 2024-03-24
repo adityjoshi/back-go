@@ -39,7 +39,7 @@ type Block struct {
 
 type Student struct {
 	StudentId uint `gorm:"primaryKey"`
-	BlockId   uint
+	BlockId   uint `gorm:"foreignKey:BlockID;references:Block(BlockID);onDelete:CASCADE"`
 	USN       string
 	Room      string
 }

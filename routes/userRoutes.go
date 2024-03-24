@@ -28,7 +28,7 @@ func UserRoute(incomingRoutes *gin.Engine) {
 		})
 		c.Next()
 	})
-	incomingRoutes.GET("/complaint", func(c *gin.Context) {
+	incomingRoutes.GET("/complaint", middleware.AuthorizeComplaint(), func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "This function is accessible by complaint only",
 		})
