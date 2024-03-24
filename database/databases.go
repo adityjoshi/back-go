@@ -16,8 +16,9 @@ func InitDatabase() {
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
+	} else {
+		fmt.Print("database connected successfully ⚡️")
 	}
-	fmt.Print("database connected successfully ⚡️")
 
 	// Migrate the schema
 	DB.AutoMigrate(&User{}, &Block{}, &Student{}, &Category{}, &Complaint{})
@@ -52,9 +53,9 @@ type Category struct {
 type Complaint struct {
 	ID               uint `gorm:"primaryKey"`
 	Name             string
-	BlockID          uint
+	BlockID          uint `gorm:"foreignKey:BlockID;references:Block(BlockID);onDelete:CASCADE"`
 	CategoryID       uint
-	StudentID        uint
+	StudentID        uint `gorm:"foreignKey:StudentID;references:Student(StudentID);onDelete:CASCADE"`
 	AssignedWorkerID uint
 	WardenID         uint
 	Description      string
