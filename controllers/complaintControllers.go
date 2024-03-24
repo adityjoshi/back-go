@@ -52,5 +52,5 @@ func DecodeStudent(userID int) (studentID, blockID uint, err error) {
 	if err := database.DB.Where("student_id = ?", userID).First(&student).Error; err != nil {
 		return 0, 0, err
 	}
-	return student.StudentId, student.BlockId, nil
+	return student.StudentID, student.BlockID, nil
 }
