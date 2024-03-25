@@ -35,7 +35,7 @@ func UserRoute(incomingRoutes *gin.Engine) {
 		c.Next()
 	})
 
-	incomingRoutes.POST("/compl", middleware.AuthorizeComplaint(), controllers.PostComplaints, func(c *gin.Context) {
+	incomingRoutes.POST("/compl", middleware.AuthorizeComplaint(), func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "This function is by complaint only",
 		})

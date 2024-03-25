@@ -56,7 +56,7 @@ func PostComplaints(c *gin.Context) {
 // 	return student.StudentID, student.BlockID, nil
 // }
 
-// DecodeStudent decodes the student ID and block ID based on the provided user ID
+// DecodeStudentdecodes the student ID and block ID based on the provided user ID
 func DecodeStudent(userID int) (studentID, blockID uint, err error) {
 	var student database.Student
 	if err := database.DB.Where("student_id = ?", userID).Find(&student).Error; err != nil {
