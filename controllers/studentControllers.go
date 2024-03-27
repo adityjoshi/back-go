@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"BACKEND-GO/database"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,8 +26,9 @@ func PostStudent(c *gin.Context) {
 func GetStudentByID(c *gin.Context) {
 	studentID := c.Param("student_id")
 	var student database.Student
+	fmt.Print(studentID)
 
-	err := database.DB.First(&student, studentID).Error
+	err := database.DB.Find(&student, studentID).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found"})
 		return

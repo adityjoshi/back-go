@@ -31,6 +31,9 @@ type User struct {
 	Phone    string `gorm:"not null"`
 	Password string `gorm:"not null"`
 	Type     string `gorm:"not null"`
+	BlockID  uint
+	USN      string
+	Room     string
 }
 
 type Block struct {
@@ -49,6 +52,12 @@ type Category struct {
 	CategoryID   uint   `gorm:"primaryKey"`
 	CategoryName string `gorm:"not null"`
 }
+type ComplaintType string
+
+const (
+	WIFI        ComplaintType = "WIFI"
+	ELECTRICITY ComplaintType = "ELECTRICITY"
+)
 
 type Complaint struct {
 	ID               uint `gorm:"primaryKey"`
@@ -56,6 +65,7 @@ type Complaint struct {
 	BlockID          uint `gorm:"foreignKey:BlockID;references:Block(BlockID);onDelete:CASCADE"`
 	CategoryID       uint
 	StudentID        uint `gorm:"foreignKey:StudentID;references:Student(StudentID);onDelete:CASCADE"`
+	ComplaintIssues  ComplaintType
 	AssignedWorkerID uint
 	WardenID         uint
 	Description      string

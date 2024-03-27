@@ -47,16 +47,40 @@ func PostComplaints(c *gin.Context) {
 	c.JSON(http.StatusCreated, complaint)
 }
 
-// // DecodeStudent decodes the student ID and block ID based on the provided user ID
-// func DecodeStudent(userID int) (studentID, blockID uint, err error) {
-// 	var student database.Student
-// 	if err := database.DB.Where("student_id = ?", userID).First(&student).Error; err != nil {
-// 		return 0, 0, err
-// 	}
-// 	return student.StudentID, student.BlockID, nil
-// }
+func GetAllComplaintsByUser(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	claims, err := utils.DecodeJWT(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized token"})
+		return
+	}
 
-// DecodeStudentdecodes the student ID and block ID based on the provided user ID
+	userType := claims["user"].(map[string]interface{})["type"].(string)
+	if userType == "warden" {
+		var allComplaints []database.Complaint
+		if err := database.DB.Order("created_at DESC").Find(&allComplaints).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			return
+		}
+		c.JSON(http.StatusOK, allComplaints)
+	} else if userType == "student" {
+		userID := int(claims["user"].(map[string]interface{})["user_id"].(float64))
+		studentID, _, err := DecodeStudent(userID) // Ignoring blockID
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized studentid and block id"})
+			return
+		}
+		var myComplaints []database.Complaint
+		if err := database.DB.Where("student_id = ?", studentID).Order("created_at DESC").Find(&myComplaints).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			return
+		}
+		c.JSON(http.StatusOK, myComplaints)
+	} else {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
+	}
+}
+
 func DecodeStudent(userID int) (studentID, blockID uint, err error) {
 	var student database.Student
 	if err := database.DB.Where("student_id = ?", userID).Find(&student).Error; err != nil {

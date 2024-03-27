@@ -40,6 +40,18 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}
+	if newUser.Type == "student" {
+		var newStudent database.Student
+		newStudent.USN = newUser.USN
+		newStudent.Room = newUser.Room
+		newStudent.StudentID = newUser.UserID
+		newStudent.BlockID = newUser.BlockID
+
+		if err := database.DB.Create(&newStudent).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create student record"})
+			return
+		}
+	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User registered successfully"})
 }

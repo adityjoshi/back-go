@@ -15,7 +15,6 @@ import (
 func init() {
 	initiliazers.LoadEnvVariable()
 }
-
 func main() {
 	// Load environment variables from .env file
 	if err := godotenv.Load(); err != nil {
@@ -27,7 +26,10 @@ func main() {
 	//	jwtSecret := os.Getenv("JWTSECRET")
 
 	router := gin.Default()
+	router.Static("/", "BACKEND-GO/Backend/frontend/dist")
 	routes.UserRoute(router)
+	routes.ComplaintRoutes(router)
+	routes.StudentRoutes(router)
 
 	server := &http.Server{
 		Addr:    ":2426",
