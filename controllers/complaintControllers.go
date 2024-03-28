@@ -81,6 +81,55 @@ func GetAllComplaintsByUser(c *gin.Context) {
 	}
 }
 
+// func GetAllComplaintsByUser(c *gin.Context) {
+// 	token := c.GetHeader("Authorization")
+// 	claims, err := utils.DecodeJWT(token)
+// 	if err != nil {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized token"})
+// 		return
+// 	}
+
+//		userType := claims["user"].(map[string]interface{})["type"].(string)
+//		if userType == "warden" {
+//			var allComplaints []database.Complaint
+//			if err := database.DB.Order("created_at DESC").Find(&allComplaints).Error; err != nil {
+//				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+//				return
+//			}
+//			c.JSON(http.StatusOK, allComplaints)
+//		} else if userType == "student" {
+//			userID := int(claims["user"].(map[string]interface{})["user_id"].(float64))
+//			studentID, _, err := DecodeStudent(userID) // Ignoring blockID
+//			if err != nil {
+//				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized studentid and block id"})
+//				return
+//			}
+//			var myComplaints []database.Complaint
+//			if err := database.DB.Select("name", "block_id", "description").Where("student_id = ?", studentID).Order("created_at DESC").Find(&myComplaints).Error; err != nil {
+//				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+//				return
+//			}
+//			c.JSON(http.StatusOK, myComplaints)
+//		} else {
+//			c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
+//		}
+//	}
+func GetComplaintByID(c *gin.Context) {
+	// Get the complaint ID from the URL parameter
+	complaintID := c.Param("id")
+
+	// Retrieve the complaint from the database by its ID
+	var complaint database.Complaint
+	if err := database.DB.First(&complaint, complaintID).Error; err != nil {
+		// If complaint not found, return 404 Not Found
+		c.JSON(http.StatusNotFound, gin.H{"error": "Complaint not found"})
+		return
+	}
+
+	// If complaint found, return it as JSON response
+	c.JSON(http.StatusOK, complaint)
+}
+
 func DecodeStudent(userID int) (studentID, blockID uint, err error) {
 	var student database.Student
 	if err := database.DB.Where("student_id = ?", userID).Find(&student).Error; err != nil {

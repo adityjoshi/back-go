@@ -303,9 +303,6 @@
 
 
 
-
-
-
 import React, { useState, useEffect } from "react";
 import { GetAuthHeader } from "../utils/Headers";
 import clsx from "clsx";
@@ -460,8 +457,7 @@ const ComplaintsPage = () => {
   const handleApproval = async (complaint_id) => {
     try {
       const response = await fetch(
-        // `http://localhost:2426/complaints/${complaint_id}`,
-        `http://localhost:2426/complaints/`,
+        `http://localhost:2426/complaints/${id}`,
         {
           method: "GET",
           headers: GetAuthHeader(),
