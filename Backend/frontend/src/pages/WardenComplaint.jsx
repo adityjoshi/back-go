@@ -29,7 +29,7 @@ const WardenComplaints = () => {
 
   const getComplaints = async (e) => {
     try {
-      const response = await fetch("http://localhost:3000/complaints", {
+      const response = await fetch("http://localhost:2426/complaints", {
         method: "GET",
         headers: GetAuthHeader()
       });

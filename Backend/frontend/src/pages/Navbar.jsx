@@ -58,7 +58,7 @@ function Navbar() {
    
     const fetchUserType = async () => {
       try {
-        const response = await fetch("http://localhost:3000/userType", {
+        const response = await fetch("http://localhost:2426/userType", {
           method: "GET",
           headers: GetAuthHeader(),
         });

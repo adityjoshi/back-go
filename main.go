@@ -8,6 +8,9 @@ import (
 	"BACKEND-GO/initiliazers"
 	"BACKEND-GO/routes" // Update with correct path
 
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -26,7 +29,11 @@ func main() {
 	//	jwtSecret := os.Getenv("JWTSECRET")
 
 	router := gin.Default()
-	router.Static("/", "BACKEND-GO/Backend/frontend/dist")
+	router.Use(cors.Default())
+	store := cookie.NewStore([]byte("secret"))
+	router.Use(sessions.Sessions("session", store))
+
+	//router.Static("/", "BACKEND-GO/Backend/frontend/dist")
 	routes.UserRoute(router)
 	routes.ComplaintRoutes(router)
 	routes.StudentRoutes(router)
