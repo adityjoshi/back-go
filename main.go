@@ -26,7 +26,8 @@ func main() {
 	defer database.CloseDatabase()
 
 	router := gin.Default()
-	router.Use(cors.Default())
+	// router.Use(cors.Default())
+	router.Use(setupCORS())
 	store := cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("session", store))
 
@@ -41,4 +42,14 @@ func main() {
 
 	log.Println("Server is running at :2426...")
 	server.ListenAndServe()
+}
+
+func setupCORS() gin.HandlerFunc {
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:5173"} // Update with your frontend URL
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	config.AllowHeaders = append(config.AllowHeaders, "Authorization") // Allow Authorization header
+	config.AllowCredentials = true
+
+	return cors.New(config)
 }

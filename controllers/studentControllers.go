@@ -23,12 +23,26 @@ func PostStudent(c *gin.Context) {
 	c.JSON(http.StatusCreated, student)
 }
 
+// func GetStudentByID(c *gin.Context) {
+// 	studentID := c.Param("student_id")
+// 	var student database.Student
+// 	fmt.Print(studentID)
+
+// 	err := database.DB.Find(&student, studentID).Error
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found"})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, student)
+// }
+
 func GetStudentByID(c *gin.Context) {
 	studentID := c.Param("student_id")
 	var student database.Student
 	fmt.Print(studentID)
 
-	err := database.DB.Find(&student, studentID).Error
+	err := database.DB.Find(&student, "student_id = ?", studentID).Error
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Student not found"})
 		return

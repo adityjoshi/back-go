@@ -41,7 +41,7 @@ function AccountPage() {
 
   const getuserDetails = async (user_id) => {
     try {
-      const response = await fetch(`http://localhost:2426/userDetails/${user_id}`, {
+      const response = await fetch(`http://localhost:2426/student/:${student_id}`, {
         method: "GET",
         headers: GetAuthHeader(),
       });

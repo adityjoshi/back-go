@@ -26,7 +26,7 @@ function Dashboard() {
    
     const fetchUserType = async () => {
       try {
-        const response = await fetch("http://localhost:2426/userType:", {
+        const response = await fetch("http://localhost:2426/userType", {
           method: "GET",
           headers: GetAuthHeader(),
         });

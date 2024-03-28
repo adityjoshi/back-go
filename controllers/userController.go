@@ -88,18 +88,21 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"jwtToken": jwtToken, "userType": user.Type})
 }
 
+//
+
 func GetUserType(c *gin.Context) {
 	tokenString := c.GetHeader("Authorization")
+	if tokenString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Authorization header missing"})
+		return
+	}
+
 	claims, err := utils.DecodeJWT(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Token"})
 		return
 	}
-	userType := claims["user"].(map[string]interface{})["type"].(string)
 
-	if userType == "student" {
-		c.JSON(http.StatusOK, gin.H{"userType": userType})
-		return
-	}
-	c.JSON(http.StatusUnauthorized, gin.H{"error": "User is not a student"})
+	userType := claims["user"].(map[string]interface{})["type"].(string)
+	c.JSON(http.StatusOK, gin.H{"userType": userType})
 }
