@@ -51,7 +51,7 @@ const ComplaintForm = () => {
       const headers = GetAuthHeader();
       console.log("headers", headers);
       const body = { name, description, room };
-      const response = await fetch("http://localhost:2426/complaints", {
+      const response = await fetch("http://localhost:3000/complaints", {
         method: "POST",
         headers: headers,
         body: JSON.stringify(body),

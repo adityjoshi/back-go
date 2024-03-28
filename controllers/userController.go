@@ -1,15 +1,13 @@
 package controllers
 
 import (
-	"BACKEND-GO/database" // Update with correct package path
+	"BACKEND-GO/database"
 
 	"BACKEND-GO/utils"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 
-	// Update with correct package path
-	// Update with correct package path
 	"net/http"
 )
 
@@ -86,5 +84,22 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"jwtToken": jwtToken})
+	//c.JSON(http.StatusOK, gin.H{"jwtToken": jwtToken})
+	c.JSON(http.StatusOK, gin.H{"jwtToken": jwtToken, "userType": user.Type})
+}
+
+func GetUserType(c *gin.Context) {
+	tokenString := c.GetHeader("Authorization")
+	claims, err := utils.DecodeJWT(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Token"})
+		return
+	}
+	userType := claims["user"].(map[string]interface{})["type"].(string)
+
+	if userType == "student" {
+		c.JSON(http.StatusOK, gin.H{"userType": userType})
+		return
+	}
+	c.JSON(http.StatusUnauthorized, gin.H{"error": "User is not a student"})
 }

@@ -28,6 +28,7 @@ func UserRoute(incomingRoutes *gin.Engine) {
 		})
 		c.Next()
 	})
+	incomingRoutes.GET("/userType", controllers.GetUserType)
 
 	// incomingRoutes.GET("/complaint", middleware.AuthorizeComplaint(), func(c *gin.Context) {
 	// 	c.JSON(200, gin.H{
