@@ -5,6 +5,7 @@ import (
 	"BACKEND-GO/utils"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,6 +48,49 @@ func PostComplaints(c *gin.Context) {
 	c.JSON(http.StatusCreated, complaint)
 }
 
+// func GetAllComplaintsByUser(c *gin.Context) {
+// 	token := c.GetHeader("Authorization")
+// 	claims, err := utils.DecodeJWT(token)
+// 	if err != nil {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized token"})
+// 		return
+// 	}
+
+// 	userType := claims["user"].(map[string]interface{})["type"].(string)
+// 	if userType == "warden" {
+// 		var allComplaints []database.Complaint
+// 		if err := database.DB.Order("created_at DESC").Find(&allComplaints).Error; err != nil {
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+// 			return
+// 		}
+// 		c.JSON(http.StatusOK, allComplaints)
+// 	} else if userType == "student" {
+// 		userID := int(claims["user"].(map[string]interface{})["user_id"].(float64))
+// 		studentID, _, err := DecodeStudent(userID) // Ignoring blockID
+// 		if err != nil {
+// 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized studentid and block id"})
+// 			return
+// 		}
+// 		var myComplaints []database.Complaint
+// 		if err := database.DB.Where("student_id = ?", studentID).Order("created_at DESC").Find(&myComplaints).Error; err != nil {
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+// 			return
+// 		}
+// 		c.JSON(http.StatusOK, myComplaints)
+// 		} else {
+// 		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
+// 	}
+// }
+
+//
+
+type ComplaintResponse struct {
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	BlockID     uint      `json:"block_id"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
 func GetAllComplaintsByUser(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	claims, err := utils.DecodeJWT(token)
@@ -57,8 +101,8 @@ func GetAllComplaintsByUser(c *gin.Context) {
 
 	userType := claims["user"].(map[string]interface{})["type"].(string)
 	if userType == "warden" {
-		var allComplaints []database.Complaint
-		if err := database.DB.Order("created_at DESC").Find(&allComplaints).Error; err != nil {
+		var allComplaints []ComplaintResponse
+		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at").Order("created_at DESC").Scan(&allComplaints).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -70,8 +114,8 @@ func GetAllComplaintsByUser(c *gin.Context) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized studentid and block id"})
 			return
 		}
-		var myComplaints []database.Complaint
-		if err := database.DB.Where("student_id = ?", studentID).Order("created_at DESC").Find(&myComplaints).Error; err != nil {
+		var myComplaints []ComplaintResponse
+		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at").Where("student_id = ?", studentID).Order("created_at DESC").Scan(&myComplaints).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -81,39 +125,6 @@ func GetAllComplaintsByUser(c *gin.Context) {
 	}
 }
 
-// func GetAllComplaintsByUser(c *gin.Context) {
-// 	token := c.GetHeader("Authorization")
-// 	claims, err := utils.DecodeJWT(token)
-// 	if err != nil {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized token"})
-// 		return
-// 	}
-
-//		userType := claims["user"].(map[string]interface{})["type"].(string)
-//		if userType == "warden" {
-//			var allComplaints []database.Complaint
-//			if err := database.DB.Order("created_at DESC").Find(&allComplaints).Error; err != nil {
-//				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-//				return
-//			}
-//			c.JSON(http.StatusOK, allComplaints)
-//		} else if userType == "student" {
-//			userID := int(claims["user"].(map[string]interface{})["user_id"].(float64))
-//			studentID, _, err := DecodeStudent(userID) // Ignoring blockID
-//			if err != nil {
-//				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized studentid and block id"})
-//				return
-//			}
-//			var myComplaints []database.Complaint
-//			if err := database.DB.Select("name", "block_id", "description").Where("student_id = ?", studentID).Order("created_at DESC").Find(&myComplaints).Error; err != nil {
-//				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-//				return
-//			}
-//			c.JSON(http.StatusOK, myComplaints)
-//		} else {
-//			c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
-//		}
-//	}
 func GetComplaintByID(c *gin.Context) {
 	// Get the complaint ID from the URL parameter
 	complaintID := c.Param("id")

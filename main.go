@@ -6,7 +6,7 @@ import (
 
 	"BACKEND-GO/database"
 	"BACKEND-GO/initiliazers"
-	"BACKEND-GO/routes" // Update with correct path
+	"BACKEND-GO/routes"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
@@ -46,9 +46,9 @@ func main() {
 
 func setupCORS() gin.HandlerFunc {
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"} // Update with your frontend URL
+	config.AllowOrigins = []string{"http://localhost:5173"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
-	config.AllowHeaders = append(config.AllowHeaders, "Authorization") // Allow Authorization header
+	config.AllowHeaders = append(config.AllowHeaders, "Authorization")
 	config.AllowCredentials = true
 
 	return cors.New(config)

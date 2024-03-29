@@ -44,6 +44,8 @@ func Register(c *gin.Context) {
 		newStudent.Room = newUser.Room
 		newStudent.StudentID = newUser.UserID
 		newStudent.BlockID = newUser.BlockID
+		newStudent.FullName = newUser.FullName
+		newStudent.Email = newUser.Email
 
 		if err := database.DB.Create(&newStudent).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create student record"})
