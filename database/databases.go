@@ -21,7 +21,7 @@ func InitDatabase() {
 	}
 
 	// Migrate the schema
-	DB.AutoMigrate(&User{}, &Block{}, &Student{}, &Category{}, &Complaint{})
+	DB.AutoMigrate(&User{}, &Block{}, &Student{}, &Category{}, &Complaint{}, &Warden{})
 }
 
 type User struct {
@@ -49,6 +49,11 @@ type Student struct {
 	USN       string
 	BlockID   uint `gorm:"foreignKey:BlockID;references:Block(BlockID);onDelete:CASCADE"`
 	Room      string
+}
+
+type Warden struct {
+	Warden_Id uint `gorm:"primaryKey;foreignKey:Warden_Id;references:User(UserID);onDelete:CASCADE"`
+	BlockID   uint `gorm:"foreignKey:BlockID;references:Block(BlockID);onDelete:CASCADE"`
 }
 
 type Category struct {
