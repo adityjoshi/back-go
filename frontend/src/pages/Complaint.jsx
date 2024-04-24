@@ -457,7 +457,7 @@ const ComplaintsPage = () => {
   const handleApproval = async (complaint_id) => {
     try {
       const response = await fetch(
-        `http://localhost:2426/complaints/${id}`,
+        `http://localhost:2426/complaints/:id`,
         {
           method: "GET",
           headers: GetAuthHeader(),

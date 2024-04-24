@@ -93,6 +93,7 @@ type ComplaintResponse struct {
 	BlockID     uint      `json:"block_id"`
 	CreatedAt   time.Time `json:"created_at"`
 	IsCompleted bool      `json:"is_completed"`
+	ID          uint      `json:"id"`
 }
 
 func GetAllComplaintsByUser(c *gin.Context) {
@@ -106,7 +107,7 @@ func GetAllComplaintsByUser(c *gin.Context) {
 	userType := claims["user"].(map[string]interface{})["type"].(string)
 	if userType == "warden" {
 		var allComplaints []ComplaintResponse
-		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at", "is_completed").Order("created_at DESC").Scan(&allComplaints).Error; err != nil {
+		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at", "is_completed", "id").Order("created_at DESC").Scan(&allComplaints).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -119,7 +120,7 @@ func GetAllComplaintsByUser(c *gin.Context) {
 			return
 		}
 		var myComplaints []ComplaintResponse
-		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at", "is_completed").Where("student_id = ?", studentID).Order("created_at DESC").Scan(&myComplaints).Error; err != nil {
+		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at", "is_completed", "id").Where("student_id = ?", studentID).Order("created_at DESC").Scan(&myComplaints).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -197,6 +198,49 @@ func PutComplaintsByid(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, complaint)
+}
+
+func GetUserDetails(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	claims, err := utils.DecodeJWT(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized token"})
+		return
+	}
+
+	userType := claims["user"].(map[string]interface{})["type"].(string)
+	userID := int(claims["user"].(map[string]interface{})["user_id"].(float64))
+
+	if userType == "student" {
+		var studentDetails database.Student
+		if err := database.DB.Table("users").Select("full_name", "email", "phone", "usn", "block_id", "room").
+			Joins("JOIN students ON users.user_id = students.student_id").
+			Where("users.user_id = ?", userID).
+			First(&studentDetails).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Student not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			}
+			return
+		}
+		c.JSON(http.StatusOK, studentDetails)
+	} else if userType == "warden" {
+		var wardenDetails database.User
+		if err := database.DB.Table("users").Select("full_name", "email", "phone").
+			Where("users.user_id = ?", userID).
+			First(&wardenDetails).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Warden not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			}
+			return
+		}
+		c.JSON(http.StatusOK, wardenDetails)
+	} else {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized"})
+	}
 }
 
 func DecodeStudent(userID int) (studentID, blockID uint, err error) {
