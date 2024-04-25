@@ -4,12 +4,40 @@ import (
 	"BACKEND-GO/database"
 
 	"BACKEND-GO/utils"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/gomail.v2"
 
 	"net/http"
 )
+
+func MailServices(complaint database.User) error {
+	message := gomail.NewMessage()
+	message.SetHeader("From", "aditya3.collegeboard@gmail.com")
+	message.SetHeader("To", complaint.Email)
+	message.SetHeader("Subject", "New Complaint Filed")
+
+	// Construct the email body with dynamic complaint details
+	body := fmt.Sprintf("Dear student, thank you for filling the complaint form. Below are the details of your complaint:\n\n")
+	body += fmt.Sprintf("Name: %s\n", complaint.FullName)
+	body += fmt.Sprint("we keep it no fluff just asli engineering")
+	message.SetBody("text/plain", body)
+
+	//message.Attach("/home/Alex/lolcat.jpg")
+
+	// Initialize SMTP dialer
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, "aditya3.collegeboard@gmail.com", "ehnxaubjqelkotks") // Update with your SMTP server details
+
+	// Send email
+	if err := dialer.DialAndSend(message); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Email sent successfully!")
+	return nil
+}
 
 func Register(c *gin.Context) {
 	var newUser database.User
@@ -93,6 +121,9 @@ func Login(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate JWT token"})
 		return
+	}
+	if err := MailServices(user); err != nil {
+		fmt.Println("Failed to send email notification:", err)
 	}
 
 	//c.JSON(http.StatusOK, gin.H{"jwtToken": jwtToken})

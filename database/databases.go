@@ -65,6 +65,7 @@ type ComplaintType string
 const (
 	WIFI        ComplaintType = "WIFI"
 	ELECTRICITY ComplaintType = "ELECTRICITY"
+	OTHER       ComplaintType = "OTHER"
 )
 
 type Complaint struct {

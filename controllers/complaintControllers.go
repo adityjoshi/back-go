@@ -10,8 +10,38 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gopkg.in/gomail.v2"
 	"gorm.io/gorm"
 )
+
+func MailService(complaint database.Complaint) error {
+	message := gomail.NewMessage()
+	message.SetHeader("From", "aditya3.collegeboard@gmail.com")
+	message.SetHeader("To", "aditya3.collegeboard@gmail.com")
+	message.SetHeader("Subject", "New Complaint Filed")
+
+	// Construct the email body with dynamic complaint details
+	body := fmt.Sprintf("Dear student, thank you for filling the complaint form. Below are the details of your complaint:\n\n")
+	body += fmt.Sprintf("Name: %s\n", complaint.Name)
+	body += fmt.Sprintf("Description: %s\n", complaint.Description)
+	body += fmt.Sprintf("Room: %s\n", complaint.Room)
+	body += fmt.Sprintf("Complaint Type: %s\n", complaint.ComplaintIssues)
+	body += fmt.Sprint("we keep it no fluff just asli engineering")
+	message.SetBody("text/plain", body)
+
+	//message.Attach("/home/Alex/lolcat.jpg")
+
+	// Initialize SMTP dialer
+	dialer := gomail.NewDialer("smtp.gmail.com", 587, "aditya3.collegeboard@gmail.com", "ehnxaubjqelkotks") // Update with your SMTP server details
+
+	// Send email
+	if err := dialer.DialAndSend(message); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Email sent successfully!")
+	return nil
+}
 
 func PostComplaints(c *gin.Context) {
 	token := c.GetHeader("Authorization")
@@ -46,6 +76,9 @@ func PostComplaints(c *gin.Context) {
 	if err := database.DB.Create(&complaint).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
+	}
+	if err := MailService(complaint); err != nil {
+		fmt.Println("Failed to send email notification:", err)
 	}
 
 	c.JSON(http.StatusCreated, complaint)
@@ -85,15 +118,14 @@ func PostComplaints(c *gin.Context) {
 // 	}
 // }
 
-//
-
 type ComplaintResponse struct {
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	BlockID     uint      `json:"block_id"`
-	CreatedAt   time.Time `json:"created_at"`
-	IsCompleted bool      `json:"is_completed"`
-	ID          uint      `json:"id"`
+	Name            string                 `json:"name"`
+	Description     string                 `json:"description"`
+	BlockID         uint                   `json:"block_id"`
+	CreatedAt       time.Time              `json:"created_at"`
+	IsCompleted     bool                   `json:"is_completed"`
+	ID              uint                   `json:"id"`
+	ComplaintIssues database.ComplaintType `json:"complaint_issues"`
 }
 
 func GetAllComplaintsByUser(c *gin.Context) {
@@ -107,7 +139,7 @@ func GetAllComplaintsByUser(c *gin.Context) {
 	userType := claims["user"].(map[string]interface{})["type"].(string)
 	if userType == "warden" {
 		var allComplaints []ComplaintResponse
-		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at", "is_completed", "id").Order("created_at DESC").Scan(&allComplaints).Error; err != nil {
+		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at", "is_completed", "id", "complaint_issues").Order("created_at DESC").Scan(&allComplaints).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -120,7 +152,7 @@ func GetAllComplaintsByUser(c *gin.Context) {
 			return
 		}
 		var myComplaints []ComplaintResponse
-		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at", "is_completed", "id").Where("student_id = ?", studentID).Order("created_at DESC").Scan(&myComplaints).Error; err != nil {
+		if err := database.DB.Table("complaints").Select("name", "description", "block_id", "created_at", "is_completed", "id", "complaint_issues").Where("student_id = ?", studentID).Order("created_at DESC").Scan(&myComplaints).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
