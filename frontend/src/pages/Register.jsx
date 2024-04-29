@@ -102,16 +102,7 @@ function Register() {
                   <input type="text" className="block w-full cursor-text appearance-none rounded-md border border-gray-400 bg--100 py-2 px-3 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:text-gray-600 focus:shadow"  name="password" placeholder="Enter your phone number"  onChange={(e) => setPhone(e.target.value)}/>
                 </div>
               </div>
-              {/* <div className="mb-4 flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
-                <div className="flex-1">
-                  <label htmlFor="email" className="mb-2 inline-block text-xs font-medium uppercase text-gray-700">Block ID</label>
-                  <input type="text" className="block w-full cursor-text appearance-none rounded-md border border-gray-400 bg--100 py-2 px-3 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:text-gray-600 focus:shadow" id="email" name="email-username" placeholder="Enter your Block ID" autoFocus onChange={(e) => setBlock_id(e.target.value)} />
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="password" className="mb-2 inline-block text-xs font-medium uppercase text-gray-700">Room</label>
-                  <input type="text" className="block w-full cursor-text appearance-none rounded-md border border-gray-400 bg--100 py-2 px-3 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:text-gray-600 focus:shadow"  name="password" placeholder="Enter your Room" onChange={(e) => setRoom(e.target.value)}/>
-                </div>
-              </div> */}
+              
                <div className="mb-4 flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
     <div className="flex-1">
       <label htmlFor="email" className="mb-2 inline-block text-xs font-medium uppercase text-gray-700">
@@ -145,55 +136,6 @@ function Register() {
     )}
   </div>
 
-{/* <div className="mb-4 flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
-    {role === Roles.STUDENT && (
-      <div className="flex-1">
-        <label htmlFor="email" className="mb-2 inline-block text-xs font-medium uppercase text-gray-700">
-          USN
-        </label>
-        <input
-          type="text"
-          className="block w-full cursor-text appearance-none rounded-md border border-gray-400 bg--100 py-2 px-3 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:text-gray-600 focus:shadow"
-          name="email-username"
-          placeholder="Enter your USN"
-          autoFocus
-          onChange={(e) => setUsn(e.target.value)}
-        />
-      </div>
-    )}
-    <div className={role === Roles.STUDENT ? "flex-1 w-full" : "flex-1"}>
-      <label htmlFor="role" className="mb-2 inline-block text-xs font-medium uppercase text-gray-700">
-        Role
-      </label>
-      <div className="flex gap-x-3 w-fit pl-2 pr-2 bg-slate-100 rounded-md text-sm">
-        <button
-          type="button"
-          onClick={() => setRole(Roles.WARDEN)}
-          className={`rounded-md p-2 my-1 transition-all text-black ${role === Roles.WARDEN && " bg-indigo-500 text-white"}`}
-        >
-          Warden
-        </button>
-        <button
-          type="button"
-          onClick={() => setRole(Roles.STUDENT)}
-          className={`rounded-md p-2 my-1 transition-all text-black ${role === Roles.STUDENT && "bg-indigo-500 text-white"}`}
-        >
-          Student
-        </button>
-      </div>
-    </div>
-  </div>
-
-
-              <div className="mb-4">
-                <div className="flex justify-between">
-                  <label className="mb-2 inline-block text-xs font-medium uppercase text-gray-700" htmlFor="password">Password</label>
-              
-                </div>
-                <div className="relative flex w-full flex-wrap items-stretch">
-                  <input type="password" id="password" className="relative block flex-auto cursor-text appearance-none rounded-md border border-gray-400 bg--100 py-2 px-3 text-sm outline-none focus:border-indigo-500 focus:bg-white focus:text-gray-600 focus:shadow" name="password" placeholder="············" onChange={(e) => setPassword(e.target.value)}/>
-                </div>
-              </div> */}
 
 <div className="mb-4 flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
   <div className={role === Roles.STUDENT ? "flex-1 w-full" : "flex-1"}>
