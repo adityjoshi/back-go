@@ -8,7 +8,7 @@ function Register() {
   const [ password, setPassword ] = useState("")
   const [ phone, setPhone ] = useState("")
   const [role, setRole] = useState(Roles.STUDENT);
-  const [block_id, setBlock_id] = useState("");
+  const [BlockID, setBlock_id] = useState("");
   const [usn, setUsn] = useState("");
   const [room, setRoom] = useState("");
   const onSubmit = async(e) => {
@@ -18,9 +18,9 @@ function Register() {
         // const body = {full_name:fullname, email, password,phone, type: role, block_id, usn, room}
         let body;
       if (role === Roles.WARDEN) {
-        body = { full_name: fullname, email, password, phone, type: role, block_id };
+        body = { FullName: fullname, email, password, phone, type: role, BlockID };
       } else {
-        body = { full_name: fullname, email, password, phone, type: role, block_id, usn, room };
+        body = { FullName: fullname, email, password, phone, type: role,  BlockID, usn, room };
       }
         const response = await fetch("http://localhost:2426/register", {
             method: "POST",
@@ -34,7 +34,7 @@ function Register() {
         window.location = "/"
        }
        else {
-        alert("user already exists")
+        alert("User Created")
        }
     }catch(err) {
         console.log(err.message);
@@ -126,7 +126,7 @@ function Register() {
         name="email-username"
         placeholder="Enter your Block ID"
         autoFocus
-        onChange={(e) => setBlock_id(e.target.value)}
+        onChange={(e) => setBlock_id(parseInt(e.target.value))}
       />
     </div>
     {role === Roles.WARDEN ? null : (

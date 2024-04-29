@@ -37,8 +37,8 @@ type User struct {
 }
 
 type Block struct {
-	BlockId   uint   `gorm:"primaryKey"`
-	BlockName string `gorm:"not null"`
+	BlockId   uint `gorm:"primaryKey;foreignKey:BlockId;references:User(BlockID);onDelete:CASCADE"`
+	BlockName string
 }
 
 type Student struct {
@@ -47,7 +47,7 @@ type Student struct {
 	Email     string
 	Phone     string
 	USN       string
-	BlockID   uint `gorm:"foreignKey:BlockID;references:Block(BlockID);onDelete:CASCADE"`
+	BlockID   uint `gorm:"foreignKey:BlockID;references:User(BlockID);onDelete:CASCADE"`
 	Room      string
 }
 

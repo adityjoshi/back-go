@@ -8,7 +8,7 @@ import (
 
 func StudentRoutes(incomingRoutes *gin.Engine) {
 	//incomingRoutes.POST("/student", controllers.PostStudent)
-	// incomingRoutes.GET("/student", controllers.GetStudentByID)
+	//incomingRoutes.GET("/student", controllers.GetStudentByID)
 	incomingRoutes.GET("/student/:student_id", controllers.GetStudentByID)
 
 }

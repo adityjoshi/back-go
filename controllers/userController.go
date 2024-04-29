@@ -16,13 +16,13 @@ import (
 func MailServices(complaint database.User) error {
 	message := gomail.NewMessage()
 	message.SetHeader("From", "aditya3.collegeboard@gmail.com")
-	message.SetHeader("To", complaint.Email)
-	message.SetHeader("Subject", "New Complaint Filed")
+	message.SetHeader("To", complaint.Email, "aditya30joshi@gmail.com")
+	message.SetHeader("Subject", "Hostel Ease Log In")
 
 	// Construct the email body with dynamic complaint details
-	body := fmt.Sprintf("Dear student, thank you for filling the complaint form. Below are the details of your complaint:\n\n")
-	body += fmt.Sprintf("Name: %s\n", complaint.FullName)
-	body += fmt.Sprint("we keep it no fluff just asli engineering")
+	body := fmt.Sprintf("Dear student, thank you for logging in to the hostel ease. If it's not you reach out to us asap through hostelvit@gmail.com\n\n")
+	body += fmt.Sprintf("*Hostel Team*\n")
+	body += fmt.Sprintf("*Block 4*")
 	message.SetBody("text/plain", body)
 
 	//message.Attach("/home/Alex/lolcat.jpg")
@@ -117,7 +117,7 @@ func Login(c *gin.Context) {
 	}
 
 	// Generate JWT token
-	jwtToken, err := utils.GenerateJWT(int(user.UserID), user.Type)
+	jwtToken, err := utils.GenerateJWT(int(user.UserID), user.Type, user.BlockID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate JWT token"})
 		return
