@@ -1,1 +1,1 @@
-A reimplementation of hostel system in go 
+A reimplementation of hostel system in Golang
